@@ -398,7 +398,7 @@ function Calendar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-xl bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-white shadow-xl sm:bottom-5 sm:left-auto sm:right-5 sm:w-auto sm:translate-x-0"
+            className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 right-4 z-50 rounded-xl bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-white shadow-xl sm:bottom-5 sm:left-auto sm:right-5 sm:w-auto"
             role="status"
             aria-live="polite"
           >
