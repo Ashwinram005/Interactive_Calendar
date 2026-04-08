@@ -7,25 +7,31 @@ import CalendarGrid from './CalendarGrid'
 import Header from './Header'
 import NotesPanel from './NotesPanel'
 
-function getHeroByMonth(monthDate) {
+function getHeroCandidatesByMonth(monthDate) {
   const month = Number(format(monthDate, 'M'))
 
-  const images = [
-    'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1457694587812-e8bf29a43845?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1493244040629-496f6d136cc3?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1464822759844-d150ad6d1a5b?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1470770903676-69b98201ea1c?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?auto=format&fit=crop&w=1200&q=80',
-    'https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?auto=format&fit=crop&w=1200&q=80',
+  const prompts = [
+    'winter,snow,mountain',
+    'cozy,winter,landscape',
+    'spring,flowers,meadow',
+    'spring,rain,city',
+    'sunrise,green,field',
+    'summer,beach,ocean',
+    'summer,lake,mountain',
+    'sunset,forest,nature',
+    'autumn,leaves,park',
+    'autumn,mist,landscape',
+    'november,forest,path',
+    'december,holiday,lights',
   ]
 
-  return images[month - 1]
+  const prompt = prompts[month - 1]
+
+  return [
+    `https://source.unsplash.com/1600x1000/?${prompt}`,
+    `https://source.unsplash.com/1600x1000/?calendar,wall,${prompt}`,
+    `https://picsum.photos/seed/wall-calendar-${month}/1600/1000`,
+  ]
 }
 
 function buildMonthKey(monthDate) {
@@ -42,6 +48,7 @@ function Calendar() {
   const [storedNotes, setStoredNotes] = useState({})
   const [noteDraft, setNoteDraft] = useState('')
   const [theme, setTheme] = useState('light')
+  const [heroIndex, setHeroIndex] = useState(0)
 
   const { monthLabel, weekDays, weeks } = useCalendar(currentMonth)
   const { startDate, endDate, onDateClick, onDateHover, getPreviewRange, resetRange } = useRangeSelection()
@@ -108,7 +115,12 @@ function Calendar() {
     setCurrentMonth(today)
   }
 
-  const heroImage = getHeroByMonth(currentMonth)
+  const heroCandidates = useMemo(() => getHeroCandidatesByMonth(currentMonth), [currentMonth])
+  const heroImage = heroCandidates[Math.min(heroIndex, heroCandidates.length - 1)]
+
+  useEffect(() => {
+    setHeroIndex(0)
+  }, [currentMonth])
 
   const isCurrentMonthVisible = isSameMonth(currentMonth, today)
 
@@ -125,7 +137,14 @@ function Calendar() {
           transition={{ duration: 0.5 }}
           className="relative overflow-hidden rounded-[2rem] border border-white/20 shadow-paper"
         >
-          <img src={heroImage} alt={monthLabel} className="h-64 w-full object-cover sm:h-80 lg:h-full" />
+          <img
+            src={heroImage}
+            alt={monthLabel}
+            className="h-64 w-full object-cover sm:h-80 lg:h-full"
+            onError={() => {
+              setHeroIndex((prev) => Math.min(prev + 1, heroCandidates.length - 1))
+            }}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white sm:p-8">
             <p className="text-xs uppercase tracking-[0.2em] text-white/80">Wall Calendar</p>
