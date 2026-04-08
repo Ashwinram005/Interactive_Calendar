@@ -171,7 +171,7 @@ function Calendar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.2 }}
-              className="lg:flex-1"
+              className="lg:min-h-0 lg:flex-1"
             >
               <CalendarGrid
                 weekDays={weekDays}
@@ -187,7 +187,7 @@ function Calendar() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="mt-3 lg:mt-2">
+          <div className="mt-3 lg:mt-2 lg:flex-shrink-0">
             <NotesPanel
               noteScopeLabel={noteScopeLabel}
               notesText={noteDraft}

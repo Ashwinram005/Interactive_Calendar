@@ -12,8 +12,8 @@ function CalendarGrid({
   onDateHover,
 }) {
   return (
-    <div>
-      <div className="mb-3 grid grid-cols-7 gap-2">
+    <div className="lg:h-full">
+      <div className="mb-3 grid grid-cols-7 gap-2 lg:mb-2 lg:gap-1.5">
         {weekDays.map((label) => (
           <div
             key={label}
@@ -24,7 +24,7 @@ function CalendarGrid({
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-2 lg:gap-1.5">
         {weeks.flat().map((day) => (
           <DayCell
             key={day.date.toISOString()}
