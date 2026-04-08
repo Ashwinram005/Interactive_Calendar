@@ -53,9 +53,11 @@ function Calendar() {
   const [noteDraft, setNoteDraft] = useState('')
   const [theme, setTheme] = useState('light')
   const [heroIndex, setHeroIndex] = useState(0)
+  const [isRangeMode, setIsRangeMode] = useState(false)
 
   const { monthLabel, weekDays, weeks } = useCalendar(currentMonth)
-  const { startDate, endDate, onDateClick, onDateHover, getPreviewRange, resetRange } = useRangeSelection()
+  const { startDate, endDate, onDateClick, onDateHover, getPreviewRange, resetRange, collapseToSingle } =
+    useRangeSelection()
   const { previewStart, previewEnd } = getPreviewRange()
 
   const hasRange = Boolean(startDate && endDate)
@@ -127,6 +129,24 @@ function Calendar() {
     setCurrentMonth(today)
   }
 
+  const toggleRangeMode = () => {
+    setIsRangeMode((prev) => {
+      const nextMode = !prev
+      if (!nextMode) {
+        collapseToSingle()
+      }
+      return nextMode
+    })
+  }
+
+  const handleDateClick = (date) => {
+    onDateClick(date, isRangeMode)
+  }
+
+  const handleDateHover = (date) => {
+    onDateHover(date, isRangeMode)
+  }
+
   const heroCandidates = useMemo(() => getHeroCandidatesByMonth(currentMonth), [currentMonth])
   const heroImage = heroCandidates[Math.min(heroIndex, heroCandidates.length - 1)]
 
@@ -171,13 +191,27 @@ function Calendar() {
           }`}
         >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <button
-              type="button"
-              onClick={() => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))}
-              className="rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wider text-zinc-700 shadow transition hover:shadow-md"
-            >
-              {theme === 'light' ? 'Dark look' : 'Light look'}
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))}
+                className="rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wider text-zinc-700 shadow transition hover:shadow-md"
+              >
+                {theme === 'light' ? 'Dark look' : 'Light look'}
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleRangeMode}
+                className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider transition ${
+                  isRangeMode
+                    ? 'bg-accent text-white shadow'
+                    : 'bg-white text-zinc-700 shadow hover:shadow-md'
+                }`}
+              >
+                Range
+              </button>
+            </div>
 
             <button
               type="button"
@@ -214,8 +248,8 @@ function Calendar() {
                   previewStart={previewStart}
                   previewEnd={previewEnd}
                   today={today}
-                  onDateClick={onDateClick}
-                  onDateHover={onDateHover}
+                  onDateClick={handleDateClick}
+                  onDateHover={handleDateHover}
                 />
               </motion.div>
             </AnimatePresence>

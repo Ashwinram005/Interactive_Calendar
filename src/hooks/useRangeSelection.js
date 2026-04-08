@@ -6,13 +6,25 @@ export function useRangeSelection() {
   const [endDate, setEndDate] = useState(null)
   const [hoverDate, setHoverDate] = useState(null)
 
+  const collapseToSingle = () => {
+    setEndDate(null)
+    setHoverDate(null)
+  }
+
   const resetRange = () => {
     setStartDate(null)
     setEndDate(null)
     setHoverDate(null)
   }
 
-  const onDateClick = (date) => {
+  const onDateClick = (date, allowRange = false) => {
+    if (!allowRange) {
+      setStartDate(date)
+      setEndDate(null)
+      setHoverDate(null)
+      return
+    }
+
     if (!startDate || (startDate && endDate)) {
       setStartDate(date)
       setEndDate(null)
@@ -37,7 +49,12 @@ export function useRangeSelection() {
     setHoverDate(null)
   }
 
-  const onDateHover = (date) => {
+  const onDateHover = (date, allowRange = false) => {
+    if (!allowRange) {
+      setHoverDate(null)
+      return
+    }
+
     if (!startDate || endDate) {
       setHoverDate(null)
       return
@@ -66,5 +83,6 @@ export function useRangeSelection() {
     onDateHover,
     getPreviewRange,
     resetRange,
+    collapseToSingle,
   }
 }
