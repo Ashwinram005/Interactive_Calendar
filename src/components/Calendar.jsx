@@ -219,8 +219,8 @@ function Calendar() {
             theme === 'dark' ? 'invert hue-rotate-180' : ''
           }`}
         >
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
               <button
                 type="button"
                 onClick={() => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'))}
@@ -246,7 +246,7 @@ function Calendar() {
               type="button"
               onClick={jumpToToday}
               disabled={isCurrentMonthVisible}
-              className="rounded-full bg-zinc-900 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-full bg-zinc-900 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               Jump to Today
             </button>
@@ -302,7 +302,7 @@ function Calendar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-5 right-5 z-50 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white shadow-xl"
+            className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-xl bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-white shadow-xl sm:bottom-5 sm:left-auto sm:right-5 sm:w-auto sm:translate-x-0"
             role="status"
             aria-live="polite"
           >
