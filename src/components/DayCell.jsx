@@ -50,7 +50,7 @@ function DayCell({
       onMouseEnter={() => onDateHover(date)}
       onFocus={() => onDateHover(date)}
       onClick={() => onDateClick(date)}
-      className={`relative h-12 rounded-2xl px-2 text-left transition sm:h-14 lg:h-11 ${
+      className={`relative h-12 rounded-2xl px-2 text-left transition active:ring-2 active:ring-accent active:ring-offset-1 active:ring-offset-paper focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-paper sm:active:ring-0 sm:focus-visible:ring-0 sm:h-14 lg:h-11 ${
         day.isCurrentMonth
           ? 'cursor-pointer bg-white/80 text-zinc-800 hover:bg-white'
           : 'cursor-not-allowed bg-zinc-100/80 text-zinc-400'
