@@ -42,6 +42,10 @@ function buildRangeKey(startDate, endDate) {
   return `range:${format(startDate, 'yyyy-MM-dd')}_${format(endDate, 'yyyy-MM-dd')}`
 }
 
+function buildDateKey(date) {
+  return `date:${format(date, 'yyyy-MM-dd')}`
+}
+
 function Calendar() {
   const today = startOfToday()
   const [currentMonth, setCurrentMonth] = useState(today)
@@ -61,12 +65,20 @@ function Calendar() {
       return buildRangeKey(startDate, endDate)
     }
 
+    if (startDate && !endDate) {
+      return buildDateKey(startDate)
+    }
+
     return buildMonthKey(currentMonth)
   }, [startDate, endDate, currentMonth])
 
   const noteScopeLabel = useMemo(() => {
     if (startDate && endDate) {
       return `${format(startDate, 'MMM d')} - ${format(endDate, 'MMM d, yyyy')}`
+    }
+
+    if (startDate && !endDate) {
+      return `Date: ${format(startDate, 'MMM d, yyyy')}`
     }
 
     return `Entire ${format(currentMonth, 'MMMM yyyy')}`
