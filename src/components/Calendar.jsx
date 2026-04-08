@@ -54,6 +54,8 @@ function Calendar() {
   const [theme, setTheme] = useState('light')
   const [heroIndex, setHeroIndex] = useState(0)
   const [isRangeMode, setIsRangeMode] = useState(false)
+  const [hasHydratedNotes, setHasHydratedNotes] = useState(false)
+  const [toastText, setToastText] = useState('')
 
   const { monthLabel, weekDays, weeks } = useCalendar(currentMonth)
   const { startDate, endDate, onDateClick, onDateHover, getPreviewRange, resetRange, collapseToSingle } =
@@ -89,6 +91,7 @@ function Calendar() {
   useEffect(() => {
     const savedRaw = localStorage.getItem('wall-calendar-notes-v1')
     if (!savedRaw) {
+      setHasHydratedNotes(true)
       return
     }
 
@@ -99,6 +102,8 @@ function Calendar() {
       }
     } catch {
       setStoredNotes({})
+    } finally {
+      setHasHydratedNotes(true)
     }
   }, [])
 
@@ -107,15 +112,39 @@ function Calendar() {
   }, [storedNotes, noteKey])
 
   useEffect(() => {
+    if (!hasHydratedNotes) {
+      return
+    }
+
     localStorage.setItem('wall-calendar-notes-v1', JSON.stringify(storedNotes))
-  }, [storedNotes])
+  }, [storedNotes, hasHydratedNotes])
 
   const saveNotes = () => {
+    const hadExistingNote = Boolean(storedNotes[noteKey])
+
     setStoredNotes((prev) => ({
       ...prev,
       [noteKey]: noteDraft,
     }))
+
+    if (!noteDraft.trim()) {
+      setToastText('Notes cleared')
+    } else {
+      setToastText(hadExistingNote ? 'Notes updated' : 'Notes saved')
+    }
   }
+
+  useEffect(() => {
+    if (!toastText) {
+      return
+    }
+
+    const timer = setTimeout(() => {
+      setToastText('')
+    }, 1800)
+
+    return () => clearTimeout(timer)
+  }, [toastText])
 
   const goPreviousMonth = () => {
     setCurrentMonth((prev) => subMonths(prev, 1))
@@ -265,6 +294,22 @@ function Calendar() {
           </div>
         </section>
       </div>
+
+      <AnimatePresence>
+        {toastText ? (
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-5 right-5 z-50 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white shadow-xl"
+            role="status"
+            aria-live="polite"
+          >
+            {toastText}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </main>
   )
 }
