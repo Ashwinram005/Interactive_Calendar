@@ -185,7 +185,7 @@ function Calendar() {
             hasRange={hasRange}
           />
 
-          <div className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1">
+          <div className="calendar-progress-scroll lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1">
             <AnimatePresence mode="wait">
               <motion.div
                 key={monthLabel}
