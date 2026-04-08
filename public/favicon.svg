@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Calendar favicon">
+  <rect x="6" y="10" width="52" height="48" rx="10" fill="#f5f0e7" />
+  <rect x="6" y="10" width="52" height="14" rx="10" fill="#b2452f" />
+  <circle cx="19" cy="18" r="2.6" fill="#ffffff" />
+  <circle cx="45" cy="18" r="2.6" fill="#ffffff" />
+  <rect x="14" y="30" width="10" height="8" rx="2" fill="#d9c9b2" />
+  <rect x="27" y="30" width="10" height="8" rx="2" fill="#d9c9b2" />
+  <rect x="40" y="30" width="10" height="8" rx="2" fill="#d9c9b2" />
+  <rect x="14" y="41" width="10" height="8" rx="2" fill="#d9c9b2" />
+  <rect x="27" y="41" width="10" height="8" rx="2" fill="#b2452f" />
+  <rect x="40" y="41" width="10" height="8" rx="2" fill="#d9c9b2" />
+</svg>
