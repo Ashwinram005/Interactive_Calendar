@@ -183,36 +183,37 @@ function Calendar() {
             hasRange={hasRange}
           />
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={monthLabel}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2 }}
-              className="lg:min-h-0 lg:flex-1"
-            >
-              <CalendarGrid
-                weekDays={weekDays}
-                weeks={weeks}
-                startDate={startDate}
-                endDate={endDate}
-                previewStart={previewStart}
-                previewEnd={previewEnd}
-                today={today}
-                onDateClick={onDateClick}
-                onDateHover={onDateHover}
-              />
-            </motion.div>
-          </AnimatePresence>
+          <div className="lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-1">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={monthLabel}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2 }}
+              >
+                <CalendarGrid
+                  weekDays={weekDays}
+                  weeks={weeks}
+                  startDate={startDate}
+                  endDate={endDate}
+                  previewStart={previewStart}
+                  previewEnd={previewEnd}
+                  today={today}
+                  onDateClick={onDateClick}
+                  onDateHover={onDateHover}
+                />
+              </motion.div>
+            </AnimatePresence>
 
-          <div className="mt-3 lg:mt-2 lg:flex-shrink-0">
-            <NotesPanel
-              noteScopeLabel={noteScopeLabel}
-              notesText={noteDraft}
-              onChange={setNoteDraft}
-              onSave={saveNotes}
-            />
+            <div className="mt-3 lg:mt-2">
+              <NotesPanel
+                noteScopeLabel={noteScopeLabel}
+                notesText={noteDraft}
+                onChange={setNoteDraft}
+                onSave={saveNotes}
+              />
+            </div>
           </div>
         </section>
       </div>
