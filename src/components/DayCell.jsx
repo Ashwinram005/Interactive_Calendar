@@ -35,6 +35,12 @@ function DayCell({
 
   const isRangeEdge = isStart || isEnd
 
+  const rangeToneClass = inSelectedRange
+    ? 'bg-accent/20 text-zinc-900'
+    : inPreviewRange
+      ? 'bg-accent/10 text-zinc-900'
+      : ''
+
   return (
     <motion.button
       type="button"
@@ -48,9 +54,7 @@ function DayCell({
         day.isCurrentMonth
           ? 'cursor-pointer bg-white/80 text-zinc-800 hover:bg-white'
           : 'cursor-not-allowed bg-zinc-100/80 text-zinc-400'
-      } ${
-        inSelectedRange || inPreviewRange ? 'bg-accentSoft text-zinc-900' : ''
-      } ${isRangeEdge ? 'bg-accent font-bold text-white hover:bg-accent' : ''}`}
+      } ${rangeToneClass} ${isRangeEdge ? 'bg-accent/90 font-bold text-white hover:bg-accent' : ''}`}
     >
       <span className="text-sm font-medium">{format(date, 'd')}</span>
       {isToday ? (
