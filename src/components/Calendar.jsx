@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { addMonths, format, isSameMonth, startOfToday, subMonths } from 'date-fns'
+import { addMonths, format, isSameMonth, isWithinInterval, parseISO, startOfToday, subMonths } from 'date-fns'
 import { useEffect, useMemo, useState } from 'react'
 import { useCalendar } from '../hooks/useCalendar'
 import { useRangeSelection } from '../hooks/useRangeSelection'
@@ -46,11 +46,37 @@ function buildDateKey(date) {
   return `date:${format(date, 'yyyy-MM-dd')}`
 }
 
+function normalizeNotesValue(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean)
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim()
+    return trimmed ? [trimmed] : []
+  }
+
+  return []
+}
+
+function parseRangeKey(key) {
+  const match = /^range:(\d{4}-\d{2}-\d{2})_(\d{4}-\d{2}-\d{2})$/.exec(key)
+  if (!match) {
+    return null
+  }
+
+  return {
+    start: parseISO(match[1]),
+    end: parseISO(match[2]),
+  }
+}
+
 function Calendar() {
   const today = startOfToday()
   const [currentMonth, setCurrentMonth] = useState(today)
   const [storedNotes, setStoredNotes] = useState({})
-  const [noteDraft, setNoteDraft] = useState('')
+  const [noteDraftList, setNoteDraftList] = useState([])
+  const [noteInput, setNoteInput] = useState('')
   const [theme, setTheme] = useState('light')
   const [heroIndex, setHeroIndex] = useState(0)
   const [isRangeMode, setIsRangeMode] = useState(false)
@@ -88,6 +114,48 @@ function Calendar() {
     return `Entire ${format(currentMonth, 'MMMM yyyy')}`
   }, [startDate, endDate, currentMonth])
 
+  const matchingRangeKeys = useMemo(() => {
+    if (!startDate || endDate) {
+      return []
+    }
+
+    return Object.keys(storedNotes).filter((key) => {
+      if (!key.startsWith('range:')) {
+        return false
+      }
+
+      const parsed = parseRangeKey(key)
+      if (!parsed) {
+        return false
+      }
+
+      return isWithinInterval(startDate, {
+        start: parsed.start,
+        end: parsed.end,
+      })
+    })
+  }, [storedNotes, startDate, endDate])
+
+  const relatedRangeNotes = useMemo(() => {
+    if (!startDate || endDate) {
+      return []
+    }
+
+    const seen = new Set()
+    const notes = []
+
+    matchingRangeKeys.forEach((key) => {
+      normalizeNotesValue(storedNotes[key]).forEach((item) => {
+        if (!seen.has(item)) {
+          seen.add(item)
+          notes.push(item)
+        }
+      })
+    })
+
+    return notes
+  }, [storedNotes, matchingRangeKeys, startDate, endDate])
+
   useEffect(() => {
     const savedRaw = localStorage.getItem('wall-calendar-notes-v1')
     if (!savedRaw) {
@@ -108,7 +176,8 @@ function Calendar() {
   }, [])
 
   useEffect(() => {
-    setNoteDraft(storedNotes[noteKey] || '')
+    setNoteDraftList(normalizeNotesValue(storedNotes[noteKey]))
+    setNoteInput('')
   }, [storedNotes, noteKey])
 
   useEffect(() => {
@@ -120,18 +189,41 @@ function Calendar() {
   }, [storedNotes, hasHydratedNotes])
 
   const saveNotes = () => {
-    const hadExistingNote = Boolean(storedNotes[noteKey])
+    const sanitizedNotes = noteDraftList.map((item) => item.trim()).filter(Boolean)
+    const hadExistingNote = normalizeNotesValue(storedNotes[noteKey]).length > 0
 
-    setStoredNotes((prev) => ({
-      ...prev,
-      [noteKey]: noteDraft,
-    }))
+    setStoredNotes((prev) => {
+      if (sanitizedNotes.length === 0) {
+        const next = { ...prev }
+        delete next[noteKey]
+        return next
+      }
 
-    if (!noteDraft.trim()) {
+      return {
+        ...prev,
+        [noteKey]: sanitizedNotes,
+      }
+    })
+
+    if (sanitizedNotes.length === 0) {
       setToastText('Notes cleared')
     } else {
       setToastText(hadExistingNote ? 'Notes updated' : 'Notes saved')
     }
+  }
+
+  const addNoteItem = () => {
+    const nextNote = noteInput.trim()
+    if (!nextNote) {
+      return
+    }
+
+    setNoteDraftList((prev) => [...prev, nextNote])
+    setNoteInput('')
+  }
+
+  const removeNoteItem = (indexToRemove) => {
+    setNoteDraftList((prev) => prev.filter((_, index) => index !== indexToRemove))
   }
 
   useEffect(() => {
@@ -286,8 +378,12 @@ function Calendar() {
             <div className="mt-3 lg:mt-2">
               <NotesPanel
                 noteScopeLabel={noteScopeLabel}
-                notesText={noteDraft}
-                onChange={setNoteDraft}
+                notesList={noteDraftList}
+                relatedRangeNotes={relatedRangeNotes}
+                noteInput={noteInput}
+                onInputChange={setNoteInput}
+                onAddNote={addNoteItem}
+                onRemoveNote={removeNoteItem}
                 onSave={saveNotes}
               />
             </div>
