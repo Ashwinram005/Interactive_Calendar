@@ -126,9 +126,7 @@ function Calendar() {
 
   return (
     <main
-      className={`min-h-screen bg-grain px-4 py-8 font-body sm:px-8 lg:h-screen lg:overflow-hidden lg:p-6 ${
-        theme === 'dark' ? 'invert hue-rotate-180' : ''
-      }`}
+      className="min-h-screen bg-grain px-4 py-8 font-body sm:px-8 lg:h-screen lg:overflow-hidden lg:p-6"
     >
       <div className="mx-auto grid w-full max-w-7xl gap-6 lg:h-full lg:grid-cols-[1.1fr,1fr]">
         <motion.section
@@ -155,7 +153,11 @@ function Calendar() {
           </div>
         </motion.section>
 
-        <section className="rounded-[2rem] bg-paper/95 p-5 shadow-paper backdrop-blur sm:p-6 lg:flex lg:h-full lg:flex-col lg:overflow-hidden lg:p-5">
+        <section
+          className={`rounded-[2rem] bg-paper/95 p-5 shadow-paper backdrop-blur sm:p-6 lg:flex lg:h-full lg:flex-col lg:overflow-hidden lg:p-5 ${
+            theme === 'dark' ? 'invert hue-rotate-180' : ''
+          }`}
+        >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
             <button
               type="button"
